@@ -1,641 +1,181 @@
-SentriRoad 🚦
+# Pluto
 
-SentriRoad is a road-safety operations platform for collecting road evidence, detecting road damage with AI, prioritizing repairs, and coordinating the workflow between citizens, drone operators, road authorities, and repair crews.
+**Choose your genre. Choose your fate.** Pick one of four genres, make four decisions
+in an AI-generated story, and reach a twist ending plus a rule-based explorer profile
+you can download as a card. Runs entirely in the browser — no camera, no microphone,
+no account, no database, no server.
 
-The project is split into a React/Vite frontend, an Express/Supabase backend, and a separate Python FastAPI AI service.
+Built to the six-document spec (PRD · TRD · App Flow · UI/UX · Schema · Implementation Plan).
 
-Overview
+---
 
-SentriRoad supports two main evidence sources:
+## Run it
 
-Citizen reports — a citizen submits a road-damage photo and location.
-
-Drone flight runs — a drone operator uploads flight video together with telemetry. GPS information is taken from the telemetry instead of requiring the operator to manually enter a location.
-
-The system processes evidence, creates detections, calculates an urgency/priority score, creates a work order, and guides the repair workflow.
-
-Main workflow
-
-Citizen / Drone Operator
-        │
-        ├── Upload evidence
-        │
-        ▼
-   Supabase Storage
-        │
-        ▼
-   Express Backend
-        │
-        ▼
-   Python AI Service
-        │
-        ├── Damage detection
-        ├── Confidence
-        └── Bounding box
-        │
-        ▼
-    Detection
-        │
-        ▼
-   Scoring Engine
-        │
-        ▼
-    Work Order
-        │
-        ├── Authority dispatches
-        ├── Authority assigns crew
-        ▼
-    Repair Crew
-        │
-        ├── Submits repair evidence
-        ▼
-    Authority Review
-        │
-        ├── Approve
-        └── Return for repair
-        │
-        ▼
-   Verification
-
-Features
-
-Evidence collection
-
-Citizen road-damage reports
-
-Drone video uploads
-
-Drone telemetry uploads
-
-Direct uploads to Supabase Storage using signed upload URLs
-
-Optional report descriptions
-
-Telemetry-derived GPS for drone detections
-
-AI detection
-
-Python FastAPI detection service
-
-Hosted Roboflow inference
-
-Pothole/road-damage detection
-
-Confidence filtering
-
-Bounding-box processing
-
-Video frame extraction with FFmpeg
-
-Configurable frame processing
-
-Operations
-
-Detection records
-
-Automated urgency scoring
-
-Estimated repair cost
-
-SLA/priority information
-
-Work-order generation
-
-PDF work-order reports
-
-Crew assignment
-
-Repair evidence submission
-
-Authority review
-
-Verification after approval
-
-Role-based access
-
-Role
-
-Main responsibilities
-
-citizen
-
-Submit reports, view own reports, provide feedback
-
-drone_operator
-
-Submit drone flight runs with video + telemetry and view their reports
-
-authority
-
-View operations, dispatch work, assign crews, review repairs, view PDFs
-
-crew
-
-View assigned work and submit repair evidence
-
-admin
-
-Administrative access and authority-level operations
-
-The repair-submission action is restricted to the repair crew role.
-
-Tech Stack
-
-Frontend
-
-React
-
-TypeScript
-
-Vite
-
-Tailwind CSS
-
-Radix UI
-
-React Query
-
-React Hook Form
-
-Zod
-
-Recharts
-
-Wouter
-
-Lucide React
-
-Backend
-
-Node.js
-
-Express
-
-Supabase JS
-
-PostgreSQL through Supabase
-
-JWT authentication
-
-bcrypt password hashing
-
-PDFKit
-
-Axios
-
-AI service
-
-Python
-
-FastAPI
-
-Uvicorn
-
-Pydantic
-
-Requests
-
-FFmpeg
-
-Roboflow hosted inference
-
-Storage / database
-
-Supabase PostgreSQL
-
-Supabase Storage
-
-Project Structure
-
-sentriroad/
-├── artifacts/
-│   └── sentriroad/                 # React/Vite frontend
-│       ├── src/
-│       │   ├── components/
-│       │   ├── hooks/
-│       │   ├── pages/
-│       │   ├── App.tsx
-│       │   └── main.tsx
-│       ├── public/
-│       ├── package.json
-│       └── vite.config.ts
-│
-├── lib/
-│   ├── api-client-react/            # Generated React API client
-│   └── api-spec/
-│       └── openapi.yaml             # API contract
-│
-└── sentriroad-backend/
-    └── src/
-        ├── config/
-        ├── controllers/
-        ├── middleware/
-        ├── routes/
-        ├── services/
-        ├── utils/
-        └── server.js
-
-Backend AI service and database files:
-
-sentriroad-backend/
-├── ai-service/
-│   ├── main.py
-│   ├── telemetry_service.py
-│   └── requirements.txt
-├── scripts/
-│   └── seed.js
-├── sql/
-│   └── schema.sql
-└── package.json
-
-Prerequisites
-
-Install the following before running the project:
-
-Node.js 18+ recommended
-
-npm
-
-Python 3.10+
-
-FFmpeg
-
-A Supabase project
-
-A Roboflow account/API key if using real AI inference
-
-Environment Variables
-
-Backend
-
-Create a .env file in the backend directory.
-
-PORT=4000
-NODE_ENV=development
-
-SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-SUPABASE_STORAGE_BUCKET=evidence-uploads
-
-JWT_SECRET=your_random_jwt_secret
-JWT_EXPIRES_IN=7d
-
-AI_SERVICE_URL=http://localhost:8000
-
-SLA_HOURS_DEFAULT=48
-
-AI Service
-
-Create ai-service/.env:
-
-ROBOFLOW_API_KEY=your_roboflow_private_api_key
-ROBOFLOW_MODEL_ID=your_model_id
-
-Never commit .env files or service-role/API keys to GitHub.
-
-Database Setup
-
-The backend contains the database schema in:
-
-sql/schema.sql
-
-The schema defines the core entities used by the application, including users, reports, detections, scores, work orders, and verification records.
-
-Before applying database changes to an existing production/development database, inspect the current Supabase schema and compare it with the repository schema.
-
-Supabase Storage
-
-Create a storage bucket for evidence uploads.
-
-The default configuration expects:
-
-evidence-uploads
-
-The application uses signed upload URLs so large media files can be uploaded directly to Supabase Storage instead of passing the file through the Express server.
-
-Running the Project
-
-1. Backend
-
-cd sentriroad-backend
+```bash
 npm install
-npm start
+npm run dev      # http://localhost:5199
+```
+
+```bash
+npm run build      # production build into dist/
+npm run typecheck  # tsc over the JSX sources
+npm run preview    # serve the built output
+```
+
+No key, no configuration and no network are required to play. Pluto ships with a local
+seeded story engine, so the demo cannot fail to load.
+
+---
+
+## What happens in a run
+
+```
+Genre select → seed generated → opening scene
+   → Round 1 → Round 2 → Round 3 → Round 4
+   → Ending (auto-transition, no user action)
+   → Explorer profile + shareable ending card
+   → Download PNG / copy summary → Replay
+```
 
-Development mode:
+Target playthrough: four rounds plus reading, inside the 8-minute window. Round count
+is a single constant (`TOTAL_ROUNDS` in `src/engine/localEngine.js`); per the TRD the
+4 → 3 decision is deferred to timing data, not assumed.
 
-npm run dev
+---
+
+## Architecture
 
-The API is served under:
+| Path | Role |
+| --- | --- |
+| `src/engine/genres.js` | Genre presentation, palettes, **hard tone guardrails**, noun + prose banks |
+| `src/engine/seed.js` | Run-seed generation + deterministic PRNG (stable re-renders) |
+| `src/engine/localEngine.js` | Seeded story generator — scenes, options, endings, tension tiers |
+| `src/engine/scripts.js` | Hand-authored scripted story per genre, used by the fallback path |
+| `src/engine/aiClient.js` | Client-side AI adapter: strict structured output, 12s timeout, one silent retry |
+| `src/engine/profile.js` | Rule-based explorer profile (pure arithmetic, never AI-guessed) |
+| `src/engine/endingCard.js` | Canvas PNG export + copyable text summary fallback |
+| `src/hooks/useStory.js` | Session state, optimistic pre-fetch, retry → fallback orchestration |
 
-/api/v1
+No routing, no persistence — a single in-memory session object, exactly as the schema doc
+specifies.
+
+### Structured output, not parsing prose
 
-2. AI service
+Every scene arrives as:
+
+```json
+{
+  "sceneText": "…",
+  "options": [
+    {
+      "text": "…",
+      "tags": {
+        "tensionDelta": 1,
+        "clue": "…",
+        "ally": "…",
+        "profileAxis": { "bold_cautious": 1, "lone_social": 0, "curious_decisive": -1 }
+      }
+    }
+  ]
+}
+```
 
-cd sentriroad-backend/ai-service
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+State never guesses. Tension, clues, allies and the three profile axes are read directly
+out of those tags. Outputs are normalised and range-clamped before they touch state, so a
+malformed response degrades into the fallback path rather than corrupting the session.
 
-FFmpeg must be available on the system PATH.
+### The fallback is a first-class path
 
-Verify:
+Per the TRD, error handling returns an *outcome*, not another chance to fail:
 
-ffmpeg -version
+- First AI failure → automatic silent retry (nothing shown).
+- Second failure, or a call past 12s → the session switches into the scripted story for
+  that genre **from the current round onward**, styled identically to generated content.
 
-3. Frontend
+`src/engine/scripts.js` holds one complete path per genre (opening, four rounds, ending
+and twist), written to the same mature standard as the generated content, because it may
+be exactly what a room full of people sees. The topbar badge stays deliberately neutral
+during a fallback so the room cannot tell.
 
-From the frontend workspace:
+### Local engine
 
-pnpm install
-pnpm dev
+With no key configured — or before AI is switched on — Pluto runs on its local seeded
+generator. Each genre has banks of settings, figures, artefacts, pressures and beat
+templates; the run seed selects and combines them, so three consecutive runs of the same
+genre produce materially different openings. This is what makes the replayability test
+passable without spending a token.
 
-Or use the project's configured package manager/workspace commands.
+---
 
-For a production build:
+## AI provider setup (optional)
 
-pnpm build
+Open **Session** in the topbar, then:
 
-Drone Telemetry
+| Field | Value |
+| --- | --- |
+| Endpoint | `https://api.openai.com/v1/chat/completions` (any OpenAI-compatible chat endpoint) |
+| Model | e.g. `gpt-4o-mini` |
+| API key | your key — stored only in this browser's `localStorage` |
 
-Drone runs are designed to use GPS from the uploaded telemetry instead of requiring manual address/latitude/longitude entry.
+**Key exposure is a known, documented risk.** Client-side calls put the key in the
+network tab. Mitigations in place for v1:
 
-Typical drone submission:
+1. Use a key with a hard provider-level spending/rate cap — worst case is a capped bill.
+2. The key is never committed — `.gitignore` excludes `.env*`, and nothing here reads one.
+3. If this is ever shown beyond a single live session, a thin proxy becomes mandatory.
+   That is the trigger condition, flagged rather than deferred indefinitely.
 
-Flight video
-     +
-Telemetry file (.srt)
-     │
-     ▼
-Telemetry parser
-     │
-     ▼
-Timestamp → GPS mapping
-     │
-     ▼
-Video frame timestamp
-     │
-     ▼
-Detection + GPS
+`Test` in the Session panel verifies the endpoint answers with the expected JSON shape.
 
-This allows detected road damage to be associated with the location where it occurred during the flight.
+Set `VITE_...` nothing — there is deliberately no build-time key, so a build can never
+leak one.
 
-The telemetry implementation currently supports DJI-style .srt telemetry parsing.
+---
 
-API
+## Tone guardrails
 
-The API contract is maintained in:
+Negative constraints are re-sent with **every** generation so the model cannot drift over
+a long session:
 
-lib/api-spec/openapi.yaml
+- **Sci-fi** — no graphic violence; existential and moral stakes over gore.
+- **Mystery** — no gore, no graphic violence; suspense over shock.
+- **Fantasy** — no graphic violence; dark themes allowed but never explicit.
+- **Cybercrime** — **no real, actionable hacking details, commands, exploits, payloads or
+  tools**. Dramatise the tension and social cost of the act, never the method.
 
-Important endpoints include:
+Plus global constraints in `genres.js`: no gore, no explicit content, no slurs, no
+self-harm methods.
 
-Authentication
+---
 
-POST /api/v1/auth/signup
-POST /api/v1/auth/login
-GET  /api/v1/auth/me
+## Phase 8 test plan (explicit pass/fail)
 
-Uploads
+| Test | Pass condition |
+| --- | --- |
+| Replayability | Three consecutive same-genre runs produce materially different opening text and seed codes |
+| Latency | A full 4-round playthrough completes inside ~9 minutes; if consistently over, cut `TOTAL_ROUNDS` to 3 |
+| Fallback | Simulating AI failure (bad key/endpoint) transitions seamlessly — no error text, no dead screen |
+| Tone | Five replays per genre contain no violations of the guardrail list above |
+| Mobile | Tap-to-skip works on scene text; option buttons are comfortably tappable |
+| Cost/rate | Soft replay cap warns after 5 replays in a session; provider spend cap verified provider-side |
 
-POST /api/v1/uploads/signed-url
+To exercise the fallback path deliberately: set an endpoint that fails (or an invalid key)
+in the Session panel, start a run, and confirm rounds continue with no visible error —
+only the subtly coloured engine pip changes.
 
-Reports
+---
 
-POST /api/v1/reports
-GET  /api/v1/reports
-GET  /api/v1/reports/:id
-GET  /api/v1/reports/:id/status
-GET  /api/v1/reports/:id/detections
-GET  /api/v1/reports/:id/score
-POST /api/v1/reports/:id/feedback
+## Accessibility & polish
 
-Work orders
+- Tap anywhere on scene text (or press Enter/Space) to skip the typewriter; a visible
+  "tap to skip" hint makes it discoverable on mobile.
+- Number keys `1`–`3` pick an option.
+- Skeleton/shimmer loading blocks are sized to approximate scene length — never a spinner,
+  never a blank screen.
+- `prefers-reduced-motion` disables the parallax, tilt and reveal animations.
 
-GET   /api/v1/workorders
-GET   /api/v1/workorders/:id
-GET   /api/v1/workorders/:id/pdf
-PATCH /api/v1/workorders/:id/dispatch
-PATCH /api/v1/workorders/:id/assign-crew
-POST  /api/v1/workorders/:id/submit-repair
-PATCH /api/v1/workorders/:id/review
-GET   /api/v1/workorders/:id/verification
+## Out of scope in v1
 
-Metrics
-
-GET /api/v1/metrics/summary
-
-Role Permissions
-
-The backend enforces role restrictions in addition to the frontend UI.
-
-Citizen
-
-Can:
-
-Create citizen reports
-
-View permitted reports
-
-View detections/scores
-
-Submit feedback
-
-Drone Operator
-
-Can:
-
-Create drone flight reports
-
-Upload flight video
-
-Upload telemetry
-
-View their own drone reports and processing results
-
-Drone operators do not manually enter the road location when telemetry is being used.
-
-Authority
-
-Can:
-
-View operational work
-
-Dispatch work orders
-
-Assign repair crews
-
-Download work-order PDFs
-
-Review repair submissions
-
-Approve or return repairs
-
-Authority users do not submit repair evidence.
-
-Crew
-
-Can:
-
-View assigned work orders
-
-Submit repair evidence
-
-Admin
-
-Can perform administrative/authority-level operations.
-
-Authentication
-
-SentriRoad uses:
-
-Password
-   ↓
-bcrypt hash
-   ↓
-JWT
-   ↓
-Authorization header
-   ↓
-Express auth middleware
-   ↓
-Role authorization
-
-Authenticated API requests use:
-
-Authorization: Bearer <JWT>
-
-AI Video Processing
-
-For video evidence, the AI service extracts frames using FFmpeg.
-
-The processing pipeline is approximately:
-
-Video
-  ↓
-Frame extraction
-  ↓
-Selected frames
-  ↓
-Roboflow inference
-  ↓
-Confidence filtering
-  ↓
-Bounding-box normalization
-  ↓
-Best detection
-  ↓
-Backend detection record
-
-The exact frame sampling and detection behavior should be treated as implementation details and may change as the AI pipeline evolves.
-
-Scoring
-
-After a detection is created, the backend scoring service evaluates the road issue and generates operational information such as:
-
-urgency/priority
-
-estimated repair cost
-
-SLA information
-
-This information is then used by the authority dashboard and work-order workflow.
-
-Development Notes
-
-Frontend API client
-
-The frontend uses the generated client under:
-
-lib/api-client-react/
-
-The OpenAPI definition is:
-
-lib/api-spec/openapi.yaml
-
-When API response shapes or endpoints change, keep the OpenAPI contract and generated client in sync with the backend.
-
-Direct uploads
-
-Media files are intended to go directly to Supabase Storage through signed URLs. This avoids sending large video files through the Express server.
-
-Security
-
-Never commit:
-
-.env
-service_role keys
-Roboflow private API keys
-JWT secrets
-database passwords
-
-The backend service-role key must remain server-side.
-
-Testing / Validation
-
-Useful checks:
-
-Frontend typecheck
-
-pnpm typecheck
-
-Frontend production build
-
-pnpm build
-
-Backend
-
-npm start
-
-AI service
-
-uvicorn main:app --reload --port 8000
-
-For production deployments, also test the complete flow with real Supabase Storage, database access, AI inference, telemetry, and role permissions.
-
-Current Architecture
-
-┌──────────────────────────────┐
-│          React UI            │
-│        Vite + TypeScript     │
-└──────────────┬───────────────┘
-               │ REST API
-               ▼
-┌──────────────────────────────┐
-│       Express Backend        │
-│ Auth / Reports / Workorders  │
-│ Scoring / PDF / Orchestration│
-└───────┬──────────────┬───────┘
-        │              │
-        │              ▼
-        │      ┌─────────────────┐
-        │      │ Python FastAPI  │
-        │      │   AI Service    │
-        │      └────────┬────────┘
-        │               │
-        │               ▼
-        │          Roboflow API
-        │
-        ▼
-┌──────────────────────────────┐
-│           Supabase           │
-│ PostgreSQL + Storage + Auth  │
-└──────────────────────────────┘
-
-Contributing
-
-Create a feature branch.
-
-Make the required changes.
-
-Run frontend typechecking/build.
-
-Test the relevant backend/API workflow.
-
-Verify role permissions.
-
-Open a pull request with a clear description of the change.
-
-License
-
-Add the project's chosen license here before publishing the repository publicly.
-
-SentriRoad — road safety evidence, AI-assisted detection, and repair operations in one workflow.
+Accounts, persistence, deployment, monetisation, ambient audio, extra genres and the
+free-text "Something else…" option is included as a local best-effort rather than an
+AI path (it is a nice-to-have in the PRD and works without a key).
