@@ -1,3 +1,4 @@
+
 # Pluto
 
 **Choose your genre. Choose your fate.** Pick one of four genres, make four decisions
@@ -178,3 +179,7 @@ only the subtly coloured engine pip changes.
 Accounts, persistence, deployment, monetisation, ambient audio, extra genres and the
 free-text "Something else…" option is included as a local best-effort rather than an
 AI path (it is a nice-to-have in the PRD and works without a key).
+=======
+# Pluto-
+Pluto an Ai Interactive Fiction web app which allows  you to select your favourite genre and builds a story based on it .
+
