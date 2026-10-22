@@ -9,7 +9,7 @@ Built to the six-document spec (PRD · TRD · App Flow · UI/UX · Schema · Imp
 
 ## 🚀 Live Demo
 
-[Click here to visit my website](https://YOUR-REAL-RENDER-URL.onrender.com)
+[Click here to visit the live website](https://pluto-ai-1.onrender.com)
 
 ---
 
